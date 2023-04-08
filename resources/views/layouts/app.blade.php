@@ -28,6 +28,14 @@
         <link rel="stylesheet" href="{{ asset('assets/css/aditional.css') }}">
 
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+ 
+        <!-- Laraberg -->
+        <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+
+        <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}">
+        <script src="{{ asset('vendor/laraberg/js/laraberg.js') }}"></script>
+
 
     </head>
     <body class="g-sidenav-show  bg-gray-200">
@@ -181,6 +189,7 @@
               }
               Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
             }
+            Laraberg.init('post_content')
         </script>
         <script async="" defer="" src="https://buttons.github.io/buttons.js"></script>
         

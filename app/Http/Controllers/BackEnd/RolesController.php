@@ -11,122 +11,121 @@ use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class RolesController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+class RolesController extends Controller {
 
-        $roles = Role::all();
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function index( Request $request ) {
+		abort_if( Gate::denies( 'user_access' ), Response::HTTP_FORBIDDEN, '403 Forbidden' );
 
-        return view('backend.roles.index',compact('roles'));
-    }
+		$roles = Role::all();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		return view( 'backend.roles.index', compact( 'roles' ) );
+	}
 
-        $permission = Permission::get();
-        return view('backend.roles.create', compact('permission'));
-    }
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function create() {
+		abort_if( Gate::denies( 'user_access' ), Response::HTTP_FORBIDDEN, '403 Forbidden' );
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		$permission = Permission::get();
+		return view( 'backend.roles.create', compact( 'permission' ) );
+	}
 
-        $this->validate($request, [
-            'role' => 'required|unique:roles,title',
-            'permission' => 'required',
-        ]);
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function store( Request $request ) {
+		abort_if( Gate::denies( 'user_access' ), Response::HTTP_FORBIDDEN, '403 Forbidden' );
 
-        $role = Role::create(['title' => $request->input('role')]);
+		$this->validate(
+			$request,
+			array(
+				'role'       => 'required|unique:roles,title',
+				'permission' => 'required',
+			)
+		);
 
-        $role->syncPermissions($request->input('permission'));
+		$role = Role::create( array( 'title' => $request->input( 'role' ) ) );
 
-        return redirect()->route('roles.index')
-                    ->with('success','Role created successfully');
-    }
+		$role->syncPermissions( $request->input( 'permission' ) );
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Role $role)
-    {
-        abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		return redirect()->route( 'roles.index' )
+			->with( 'success', 'Role created successfully' );
+	}
 
-        return $this->edit($role);
-    }
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function show( Role $role ) {
+		abort_if( Gate::denies( 'user_access' ), Response::HTTP_FORBIDDEN, '403 Forbidden' );
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Role $role)
-    {
-        abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		return $this->edit( $role );
+	}
 
-        $permissions = Permission::pluck('title', 'id');
-        $role->load('permissions');
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function edit( Role $role ) {
+		abort_if( Gate::denies( 'user_access' ), Response::HTTP_FORBIDDEN, '403 Forbidden' );
 
-        return view('backend.roles.edit', compact('role', 'permissions'));
-    }
+		$permissions = Permission::pluck( 'title', 'id' );
+		$role->load( 'permissions' );
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		return view( 'backend.roles.edit', compact( 'role', 'permissions' ) );
+	}
 
-        $this->validate($request, [
-            'role' => 'required',
-            'permission' => 'required',
-        ]);
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function update( Request $request, $id ) {
+		abort_if( Gate::denies( 'user_access' ), Response::HTTP_FORBIDDEN, '403 Forbidden' );
 
-        $role = Role::find($id);
-        $role->update(['title' => $request->input('role')]);
-        $role->permissions()->sync($request->input('permission', []));
+		$this->validate(
+			$request,
+			array(
+				'role'       => 'required',
+				'permission' => 'required',
+			)
+		);
 
-        return redirect()->route('roles.index');
-    }
+		$role = Role::find( $id );
+		$role->update( array( 'title' => $request->input( 'role' ) ) );
+		$role->permissions()->sync( $request->input( 'permission', array() ) );
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Role $role)
-    {
-        abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+		return redirect()->route( 'roles.index' );
+	}
 
-        $role->delete();
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy( Role $role ) {
+		abort_if( Gate::denies( 'user_access' ), Response::HTTP_FORBIDDEN, '403 Forbidden' );
 
-        return redirect()->route('roles.index');
-    }
+		$role->delete();
+
+		return redirect()->route( 'roles.index' );
+	}
 }
