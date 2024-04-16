@@ -1,3 +1,5 @@
+# Per lavorare con laravel bisogna sapere anche python e anche Vue.js
+## io rimango nel piccolo con un setup di Laraberg (gutenberg per Laravel)
 Laravel artisan<br>
 DB<br>
 php artisan migrate => create tables<br>
