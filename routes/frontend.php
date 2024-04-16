@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// posts
+Route::get('/front/{slug}', FrontPostsController::class )->name( 'front' );

@@ -74,7 +74,7 @@
                               </td>
                               <td class="text-sm"></td>
                               <td class="text-sm">
-                                 <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                 <a href="{{ route('front', $post->slug) }}" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
                                        <i class="material-icons text-secondary position-relative text-lg">visibility</i>
                                  </a>
                                  <a href="{{ route('posts.edit', $post->id) }}" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit post">
